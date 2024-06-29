@@ -1,43 +1,66 @@
-const { default: makeWASocket, useSingleFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
-const { generateQR, qrCodeToString } = require('qrcode-terminal');
-const fs = require('fs');
+const {
+    default: sockConnect,
+    useMultiFileAuthState,
+    fetchLatestBaileysVersion,
+    jidNormalizedUser
+} = require('@adiwajshing/baileys')
+const {
+    upload
+} = require('./mega')
+var fs = require('fs')
+const pino = require('pino')
+var auth_path = './auth_info_baileys/'
+async function start() {
+    var {
+        version
+    } = await fetchLatestBaileysVersion()
+    const {
+        state,
+        saveCreds
+    } = await useMultiFileAuthState(auth_path)
 
-// Path to store authentication state
-const authFilePath = './auth_info.json';
-const { state, saveState } = useSingleFileAuthState(authFilePath);
+    try {
+        const sock = sockConnect({
+            logger: pino({
+                level: 'silent'
+            }),
+            printQRInTerminal: false,
+            browser: ['Bot-MD', 'safari', '3.3'],
+            auth: state,
+            version
+        })
+        sock.ev.on('creds.update', saveCreds)
 
-async function connectToWhatsApp() {
-    const socket = makeWASocket({
-        auth: state,
-    });
-
-    socket.ev.on('creds.update', saveState);
-
-    socket.ev.on('connection.update', (update) => {
-        const { connection, lastDisconnect, qr } = update;
-
-        if (qr) {
-            generateQR(qr, { small: true });
-        }
-
-        if (connection === 'close') {
-            const shouldReconnect = lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut;
-            console.log('connection closed due to ', lastDisconnect.error, ', reconnecting ', shouldReconnect);
-            // Reconnect if not logged out
-            if (shouldReconnect) {
-                connectToWhatsApp();
+        sock.ev.on('connection.update', async (update) => {
+            const {
+                connection
+            } = update
+            if (connection === 'close') {
+                start()
             }
-        } else if (connection === 'open') {
-            console.log('Successfully connected to WhatsApp');
-            sendCredentialsAsBase64();
-        }
-    });
+            if (update.qr) {
+                qr_code = update.qr
+            }
+
+            if (connection === 'open') {
+                qr_code = ''
+                const user_jid = jidNormalizedUser(sock.user.id);
+                const mega_url = await upload(fs.createReadStream(auth_path + 'creds.json'), `${user_jid}.json`);
+                const string_session = mega_url.replace('https://mega.nz/file/', '')
+                await sock.sendMessage(user_jid, {
+                    text: string_session
+                });
+                fs.rmSync(auth_path, {
+                    recursive: true,
+                    force: true
+                })
+                start()
+            }
+            process.exit(0)
+        })
+    } catch {
+        start()
+    }
 }
 
-function sendCredentialsAsBase64() {
-    const credentials = fs.readFileSync(authFilePath);
-    const base64Credentials = Buffer.from(credentials).toString('base64');
-    console.log('Base64 Credentials:', base64Credentials);
-}
-
-connectToWhatsApp();
+start()
