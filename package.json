@@ -1,16 +1,23 @@
 {
-  "name": "test",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@whiskeysockets/baileys": "^6.7.5",
-    "qrcode-terminal": "^0.12.0"
-  }
+    "name": "Taifur",
+    "description": "qr",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "author" : "Itxtaifur",
+    "dependencies": {
+        "@adiwajshing/baileys": "git+https://github.com/WhiskeySockets/Baileys.git",
+        "@adiwajshing/keyed-db": "^0.2.4",
+        "axios": "^0.24.0",
+        "cfonts" : "^3.2.0",
+        "wa_set_pkg": "^1.0.1",
+        "chalk": "^4.1.2",
+        "child_process": "^1.0.2",
+        "fs": "^0.0.1-security",
+        "os": "^0.1.2",
+        "pino": "^7.0.5",
+        "megajs": "^1.1.0",
+        "qrcode-terminal": "^0.12.0"
+    }
 }
