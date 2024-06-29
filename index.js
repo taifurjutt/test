@@ -6,7 +6,7 @@ const {
 } = require('@adiwajshing/baileys')
 const {
     upload
-} = require('./mega')
+} = require('./maga')
 var fs = require('fs')
 const pino = require('pino')
 var auth_path = './auth_info_baileys/'
@@ -24,7 +24,7 @@ async function start() {
             logger: pino({
                 level: 'silent'
             }),
-            printQRInTerminal: false,
+            printQRInTerminal: true,
             browser: ['Bot-MD', 'safari', '3.3'],
             auth: state,
             version

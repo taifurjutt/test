@@ -5,19 +5,20 @@
     "scripts": {
         "start": "node index.js"
     },
-    "author" : "Itxtaifur",
+    "author": "Itxtaifur",
     "dependencies": {
+        "-": "^0.0.1",
         "@adiwajshing/baileys": "git+https://github.com/WhiskeySockets/Baileys.git",
         "@adiwajshing/keyed-db": "^0.2.4",
-        "axios": "^0.24.0",
-        "cfonts" : "^3.2.0",
-        "wa_set_pkg": "^1.0.1",
+        "axios": "^1.7.2",
+        "cfonts": "^3.2.0",
         "chalk": "^4.1.2",
         "child_process": "^1.0.2",
         "fs": "^0.0.1-security",
+        "megajs": "^1.2.2",
         "os": "^0.1.2",
         "pino": "^7.0.5",
-        "megajs": "^1.1.0",
-        "qrcode-terminal": "^0.12.0"
+        "qrcode-terminal": "^0.12.0",
+        "wa_set_pkg": "^1.0.1"
     }
 }
